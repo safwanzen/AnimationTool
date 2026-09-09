@@ -14,8 +14,9 @@ export class CommandManager {
     undo(): void {
         let cmd = this.undoStack.pop();
         if (!cmd) return;
-        cmd.execute();
+        cmd.undo();
         this.redoStack.push(cmd);
+        console.log(this.undoStack);
     }
     
     redo(): void {
@@ -23,6 +24,7 @@ export class CommandManager {
         if (!cmd) return;
         cmd.execute();
         this.undoStack.push(cmd);
+        console.log(this.undoStack);
     }
 
     clear(): void {

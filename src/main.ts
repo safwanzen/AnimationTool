@@ -31,12 +31,13 @@ ctx.strokeStyle = strokeStyle;
 
 function setText(t: string) {
     if (text == null) return;
-    text.innerText = t;
 }
 
 let drawing = false;
 let lastX = 0;
 let lastY = 0;
+
+let beforeDraw: ImageData; 
 
 clearButton.addEventListener("click", (e) => {
     let before = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -50,11 +51,16 @@ undoButton.addEventListener("click", (e) => commandManager.undo());
 redoButton.addEventListener("click", (e) => commandManager.redo());
 
 canvas.addEventListener("mousedown", (e) => {
+    
+    beforeDraw = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
     drawing = true;
     //setText("mousedown");
     const x = e.offsetX;
     const y = e.offsetY;
+
     drawBrush(e.offsetX, e.offsetY);
+
     lastX = x;
     lastY = y;
 });
@@ -75,6 +81,10 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseup", (e) => {
     //setText("mouseup");
     drawing = false;
+
+    let after = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    if (!beforeDraw) return;
+    commandManager.execute(new DrawCommand(ctx, beforeDraw, after));
 });
 
 function drawLine(x1: number, y1: number, x2: number, y2: number) {
