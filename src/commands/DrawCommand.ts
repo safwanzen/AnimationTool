@@ -1,24 +1,19 @@
+import Bitmap from "../types/Bitmap";
 import Command from "./Command";
 
 export class DrawCommand implements Command {
-    #ctx: CanvasRenderingContext2D
 
     constructor(
-        ctx: CanvasRenderingContext2D,
-        private before: ImageData,
-        private after: ImageData
-    ) 
-    { 
-        this.#ctx = ctx
-    }
+        private bitmap: Bitmap,
+        private before: Uint8ClampedArray,
+        private after: Uint8ClampedArray
+    ) { }
     
     execute(): void {
-        this.#ctx.putImageData(this.after, 0, 0);
-        console.log("execute draw");
+        //this.bitmap.pixels = this.before;
     }
     undo(): void {
-        this.#ctx.putImageData(this.before, 0, 0);
-        console.log("undo draw");
+        //this.bitmap.pixels = this.after;
     }
 
 }
