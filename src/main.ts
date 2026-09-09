@@ -1,6 +1,14 @@
+import { CommandManager } from "./commands/CommandManager";
+import { DrawCommand } from "./commands/DrawCommand";
+
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 const text = document.getElementById('action');
+const clearButton = document.getElementById('clear') as HTMLButtonElement;
+const undoButton = document.getElementById('undo') as HTMLButtonElement;
+const redoButton = document.getElementById('redo') as HTMLButtonElement;
+
+const commandManager: CommandManager = new CommandManager();
 
 console.log(text);
 
@@ -30,9 +38,20 @@ let drawing = false;
 let lastX = 0;
 let lastY = 0;
 
+clearButton.addEventListener("click", (e) => {
+    let before = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let after = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    commandManager.execute(new DrawCommand(ctx, before, after));
+});
+
+undoButton.addEventListener("click", (e) => commandManager.undo());
+
+redoButton.addEventListener("click", (e) => commandManager.redo());
+
 canvas.addEventListener("mousedown", (e) => {
     drawing = true;
-    setText("mousedown");
+    //setText("mousedown");
     const x = e.offsetX;
     const y = e.offsetY;
     drawBrush(e.offsetX, e.offsetY);
@@ -41,7 +60,7 @@ canvas.addEventListener("mousedown", (e) => {
 });
 
 canvas.addEventListener("mousemove", (e) => {
-    setText("mousemove");
+    //setText("mousemove");
     if (!drawing) return;
 
     const x = e.offsetX;
@@ -54,16 +73,11 @@ canvas.addEventListener("mousemove", (e) => {
 });
 
 canvas.addEventListener("mouseup", (e) => {
-    setText("mouseup");
+    //setText("mouseup");
     drawing = false;
 });
 
-function drawLine(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-) {
+function drawLine(x1: number, y1: number, x2: number, y2: number) {
     const dx = x2 - x1;
     const dy = y2 - y1;
 
