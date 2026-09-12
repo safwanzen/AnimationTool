@@ -3,12 +3,17 @@ import Command from "./Command"
 export class CommandManager {
     private undoStack: Command[] = [];
     private redoStack: Command[] = [];
+    private MAX_STACK: number = 10; // limit undo until i implement optimized undo
 
     execute(command: Command): void {
         command.execute();
         this.undoStack.push(command);
+        if (this.undoStack.length > this.MAX_STACK) {
+            this.undoStack.shift();
+        }
         this.redoStack = [];
-        console.log(this.undoStack);
+        // console.log(this.undoStack);
+        console.log(this.undoStack.length);
     }
 
     undo(): void {
@@ -16,7 +21,7 @@ export class CommandManager {
         if (!cmd) return;
         cmd.undo();
         this.redoStack.push(cmd);
-        console.log(this.undoStack);
+        //console.log(this.undoStack);
     }
     
     redo(): void {
@@ -24,7 +29,7 @@ export class CommandManager {
         if (!cmd) return;
         cmd.execute();
         this.undoStack.push(cmd);
-        console.log(this.undoStack);
+        //console.log(this.undoStack);
     }
 
     clear(): void {

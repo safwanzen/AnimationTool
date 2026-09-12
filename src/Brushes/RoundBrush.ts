@@ -13,6 +13,10 @@ export class RoundBrush {
         this.color = color;
     }
 
+    setSize(size: number) {
+        this.size = size;
+    }
+
     draw(x: number, y: number): void {
         const radius = this.size / 2;
 

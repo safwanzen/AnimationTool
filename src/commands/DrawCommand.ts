@@ -10,10 +10,14 @@ export class DrawCommand implements Command {
     ) { }
     
     execute(): void {
-        //this.bitmap.pixels = this.before;
+        for (let i = 0; i < this.after.length; i++) {
+            this.bitmap.pixels[i] = this.after[i];
+        }
     }
     undo(): void {
-        //this.bitmap.pixels = this.after;
+        for (let i = 0; i < this.before.length; i++) {
+            this.bitmap.pixels[i] = this.before[i];
+        }
     }
 
 }
